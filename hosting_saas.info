@@ -1,0 +1,7 @@
+name = Hosting Software-as-a-Service
+description = Allows for sites to be created where UID1 is reserved and a second user is created and assigned a specified role.
+package = Hosting
+dependencies[] = hosting
+dependencies[] = hosting_client
+
+core = 6.x
