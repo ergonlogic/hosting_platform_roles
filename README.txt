@@ -22,4 +22,16 @@ When a site is created on a SaaS-enabled platform:
  - the "Login" link will be updated to point to the second user's account
  - Welcome email will be sent to the second user
 
+Questions
+=======
+ - Should the SaaS setting for the platform be saved into the platform context?
+
+
+Notes
+====
+ - HOOK_post_hosting_TASK_TYPE_task (ref.:http://drupal.org/node/1113858) could be implemented as hosting_saas_post_hosting_install_task(), and thus run right after the site_install task.
+ - Drush 4 now includes a number of useful 'user' commands:
+   - drush user-create [username] --mail="[email]" --password="[password]"
+   - drush user-add-role [role] [username|uid|email]
+   - drush user-login [username]
 
