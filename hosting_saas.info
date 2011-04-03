@@ -1,7 +1,10 @@
-name = Hosting Software-as-a-Service
-description = Allows for sites to be created where UID1 is reserved and a second user is created and assigned a specified role.
-package = Hosting
-dependencies[] = hosting
-dependencies[] = hosting_client
-
-core = 6.x
+core = "6.x"
+dependencies[] = "features"
+dependencies[] = "optionwidgets"
+dependencies[] = "text"
+description = "Allows for sites to be created where UID1 is reserved and a second user is created and assigned a specified role."
+features[content][] = "platform-field_saas"
+name = "Hosting SaaS"
+package = "Features"
+project = "hosting_saas"
+version = "6.x-1.0-dev"
