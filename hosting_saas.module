@@ -57,7 +57,7 @@ function hosting_saas_platformsaasform($form_state, $nid) {
   foreach ($profiles as $package_nid=>$profile_name) {
     $form[$profile_name] = array(
       '#type' => 'fieldset',
-      '#title' => $profile_name . ' (nid:' . $package_nid . ')',
+      '#title' => 'Profile: ' . $profile_name,
       '#collapsible' => TRUE, 
       '#collapsed' => TRUE,
     );
@@ -65,12 +65,12 @@ function hosting_saas_platformsaasform($form_state, $nid) {
       '#type' => 'textfield',
       '#title' => 'Admin user',
       '#autocomplete_path' => 'user/autocomplete',
-      '#description' => 'Root (uid1) user for ' . $profile_name,
+      '#description' => 'Root user (uid1) for sites created with the ' . $profile_name . ' profile.',
     );
     $form[$profile_name]['role'] = array(
       '#type' => 'textfield',
       '#title' => 'Regular user role',
-      '#description' => 'Role assigned to users creating sites on ' . $profile_name,
+      '#description' => 'Role assigned to users creating sites with the ' . $profile_name . ' profile.',
     );
   }
   $form['submit'] = array(
