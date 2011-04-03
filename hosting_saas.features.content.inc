@@ -41,12 +41,12 @@ function hosting_saas_content_default_fields() {
     'text_processing' => '0',
     'max_length' => '',
     'allowed_values' => '0
-Enable SaaS',
+1|Enable SaaS',
     'allowed_values_php' => '',
     'widget' => array(
       'default_value' => array(
         '0' => array(
-          'value' => 0,
+          'value' => 'Enable SaaS',
         ),
       ),
       'default_value_php' => NULL,
