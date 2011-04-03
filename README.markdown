@@ -14,9 +14,9 @@ Required additions to the front-end:
 
 When a site is created on a SaaS-enabled platform:
 
-- the current client will be saved as saas-client (in the site context)
 - the current client will be replaced (in the site context) by the Aegir user specified on the platform's SaaS tab for the relevant profile
-- after the site is installed, a second user will be created based on saas-client, and assigned the role specified on the platform's SaaS tab for the relevant profile **[done]**
+- after the site is installed, a second user will be created based on saas-client **[done]**
+- that user is assigned the role specified on the platform's SaaS tab for the relevant profile **[done]**
 - the "Login" link will be updated to point to the second user's account
 - Welcome email will be sent to the second user
 
