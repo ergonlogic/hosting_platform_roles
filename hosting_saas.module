@@ -2,25 +2,45 @@
 
 // Drupal needs this blank file.
 
+/**
+ * Implementation of hook_perm
+ */
+function hosting_saas_perm() {
+  $perms = array(
+    'administer SaaS settings');
+  return $perms;
+}
 
 /**
- * implementation of hook_menu
+ * Implementation of hook_menu
  */
 
 function hosting_saas_menu() {
   $items = array();
-
-  $items['node/%/saas'] = array(
+  $items['node/%hosting_saas_node/saas'] = array(
     'title' => 'SaaS',
     'description' => 'SaaS settings',
     'page callback' => 'hosting_saas_page',
     'page arguments' => array(1),
     'type' => MENU_LOCAL_TASK,
-    'access arguments' => array('view package'),
+    'access arguments' => array('administer SaaS settings'),
     'weight' => 1,
   );
   return $items;
 }
+
+function hosting_saas_node_load($arg) {
+  if (!is_numeric($arg)) {
+    return FALSE;
+  }
+  if ($node = node_load($arg)) {
+    if (in_array($node->type, array('platform'))) {
+      return $node;
+    }
+  }
+  return FALSE;
+}
+
 
 /**
  * Form where we collect SaaS information on the various profiles on a platform
@@ -72,10 +92,9 @@ function hosting_saas_forms($form_id, $args) {
 
 //}
 
-function hosting_saas_page($nid) {
-  $platform = node_load($nid);
-  drupal_set_title(t('SaaS Settings for ') . $platform->title); //@reference', array('@reference' => $ref->title)));
+function hosting_saas_page($node) {
+  drupal_set_title(t('SaaS Settings for ') . $node->title);
   $output= 'Software-as-a-Service settings apply individually to the profiles on a given platform. Below, you will find a list of the profiles available on the current platform.';
-  $output .= drupal_get_form('hosting_saas_platformsaasform', $nid);
+  $output .= drupal_get_form('hosting_saas_platformsaasform', $node->nid);
   return $output;
 }
