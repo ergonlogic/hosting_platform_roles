@@ -4,4 +4,3 @@ description = "Allows for sites to be created where UID1 is reserved and a secon
 name = "Hosting SaaS"
 package = "Hosting"
 project = "hosting_saas"
-version = "6.x-1.0-dev"
