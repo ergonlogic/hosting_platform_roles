@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Implementation of hook_perm
+ * Implementation of hook_perm().
  */
 function hosting_saas_perm() {
   $perms = array(
@@ -10,7 +10,7 @@ function hosting_saas_perm() {
 }
 
 /**
- * Implementation of hook_menu
+ * Implementation of hook_menu().
  */
 
 function hosting_saas_menu() {
@@ -55,25 +55,25 @@ function hosting_saas_platformsaasform($form_state, $nid) {
     '#type' => 'hidden',
     '#value' => $profiles,
   );
- 
-  foreach ($profiles as $package_nid=>$profile_name) {
+
+  foreach ($profiles as $package_nid => $profile_name) {
     $form[$profile_name] = array(
       '#type' => 'fieldset',
       '#title' => 'Profile: ' . $profile_name,
       '#collapsible' => TRUE,
       '#collapsed' => TRUE,
     );
-   $form[$profile_name][$nid . '_' . $package_nid . '_uid1'] = array(
+    $form[$profile_name][$nid . '_' . $package_nid . '_uid1'] = array(
       '#type' => 'textfield',
       '#title' => 'Admin user',
-      '#default_value' => variable_get('hosting_saas_' . $nid . '_' . $package_nid . '_uid1',''),
+      '#default_value' => variable_get('hosting_saas_' . $nid . '_' . $package_nid . '_uid1', ''),
       '#autocomplete_path' => 'user/autocomplete',
       '#description' => 'Root user (uid1) for sites created with the ' . $profile_name . ' profile.',
     );
     $form[$profile_name][$nid . '_' . $package_nid . '_role'] = array(
       '#type' => 'textfield',
       '#title' => 'Regular user role',
-      '#default_value' => variable_get('hosting_saas_' . $nid . '_' . $package_nid . '_role',''),
+      '#default_value' => variable_get('hosting_saas_' . $nid . '_' . $package_nid . '_role', ''),
       '#description' => 'Role assigned to users creating sites with the ' . $profile_name . ' profile.',
     );
   }
@@ -84,7 +84,7 @@ function hosting_saas_platformsaasform($form_state, $nid) {
   return $form;
 }
 
-function hosting_saas_forms($form_id, $args) { 
+function hosting_saas_forms($form_id, $args) {
   $forms['saasform'] = array(
     'callback' => 'hosting_saas_platformsaasform',
     'callback arguments' => $args,
@@ -92,13 +92,12 @@ function hosting_saas_forms($form_id, $args) {
   return $forms;
 }
 
-//TODO:  hosting_saas_form_validate?
+// TODO:  hosting_saas_form_validate?
 
 function hosting_saas_platformsaasform_submit($form, &$form_state) {
-/*
-setting variable format:
-hosting_saas_[platform_nid]_[profile_nid]_[uid1|role]
-*/
+
+// setting variable format: hosting_saas_[platform_nid]_[profile_nid]_[uid1|role]
+
   $nid = $form['#parameters'][2];
   $profiles = $form['profiles']['#value'];
   foreach ($profiles as $package_nid => $profile_name) {
@@ -106,9 +105,9 @@ hosting_saas_[platform_nid]_[profile_nid]_[uid1|role]
     variable_set('hosting_saas_' . $nid . '_' . $package_nid . '_role', $form_state['values'][$nid . '_' . $package_nid . '_role']);
   }
 }
-       
+
 function hosting_saas_page($node) {
-  drupal_set_title(t('SaaS Settings for ') . $node->title);
+  drupal_set_title(t('SaaS Settings for') . ' ' . $node->title);
   $output= 'Software-as-a-Service settings apply individually to the profiles on a given platform. Below, you will find a list of the profiles available on the current platform.';
   $output .= drupal_get_form('hosting_saas_platformsaasform', $node->nid);
   return $output;

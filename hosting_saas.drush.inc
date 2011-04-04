@@ -1,9 +1,16 @@
 <?php
+// $Id$
 
 /**
- * Implementation of drush_hook_pre_hosting_task()
+ * @file
  *
- * Override the client in create_admin_user, if SaaS implemented on the profile/platform
+ *   All the heavy lifting
+ */
+
+/**
+ * Implementation of drush_hook_pre_hosting_task().
+ *
+ * Override the client in create_admin_user, if SaaS implemented on the platform
  */
 
 function drush_hosting_saas_pre_hosting_task() {
@@ -21,7 +28,7 @@ function drush_hosting_saas_pre_hosting_task() {
 
 
 /*
- * Implementation of hook_post_hosting_TASK_TYPE_task()
+ * Implementation of hook_post_hosting_TASK_TYPE_task().
  *
  * Here we add a second user to the site, and assign them a role
  */
@@ -35,7 +42,7 @@ function hosting_saas_post_hosting_install_task($task, $data) {
 
   $saas_client_name = $task->ref->name;
   $saas_user = user_load(array(name => $saas_client_name));
-  $saas_client_email = $saas_user->mail; //$task->options['client_email'];
+  $saas_client_email = $saas_user->mail;
 
   // call a backend task to do the actual installation.
   $target = $task->context_options['uri'];

@@ -3,15 +3,14 @@
 /**
  * @file
  *    defines a feature that enables some SaaS requirements
- * 
  */
 
 /**
  * We need to register a hosting feature with Aegir.
  *
  * This is used to generate the 'admin/hosting/saas' page.
- * 
- * @return 
+ *
+ * @return
  *  associative array indexed by feature key.
  */
 function hosting_saas_hosting_feature() {
