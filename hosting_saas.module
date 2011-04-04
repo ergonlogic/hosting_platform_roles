@@ -115,5 +115,3 @@ function hosting_saas_page($node) {
   $output .= drupal_get_form('hosting_saas_platformsaasform', $node->nid);
   return $output;
 }
-
-
