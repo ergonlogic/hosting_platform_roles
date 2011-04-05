@@ -51,7 +51,7 @@ function hosting_saas_post_hosting_install_task($task, $data) {
   $target = $task->context_options['uri'];
   $commands = array();
   if ($uid1 != '') {
-    $commands['user-create'] = 'user-create ' . $saas_client_name . ' --mail=' . $saas_client_email;
+    $commands['user-create'] = 'user-create ' . $saas_client_name . ' --mail=' . $saas_client_email . ' --message=status_activated';
     $commands['user-login'] = 'user-login ' . $saas_client_name;
   }
   if ($role != '') {
@@ -63,11 +63,13 @@ function hosting_saas_post_hosting_install_task($task, $data) {
     $result = provision_backend_invoke($target, $command);
     $results[$cmd]['output'] = $result['output'];
   }
-  
+
+
   // ref.: hosting_site_post_hosting_login_reset_task()
   $cache = array(
     'expire' => strtotime("+24 hours"), 
     'link' => $results['user-login']['output'],
   );
   cache_set('hosting:site:' . $task->ref->nid . ':login_link', $cache, 'cache', $cache['expire'] );
+
 }
