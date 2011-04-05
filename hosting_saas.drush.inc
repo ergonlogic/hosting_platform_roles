@@ -18,8 +18,11 @@ function drush_hosting_saas_pre_hosting_task() {
   $platform_nid = $task->ref->platform;
   $profile_nid = $task->ref->profile;
 
+  // Here we get the name of the user we want to assign uid1 to.
+  // It's in a variable built up using the platform and profile node ID's.
   $uid1_name = variable_get('hosting_saas_' . $platform_nid . '_' . $profile_nid . '_uid1', '');
 
+  // We only need to do this on site installs, and probably not on verify's
   if ($task->ref->type == 'site' && ($task->task_type == 'install' || $task->task_type == 'verify')) {
     $user = user_load(array(name => $uid1_name));
     $task->uid = $user->uid;
@@ -48,15 +51,23 @@ function hosting_saas_post_hosting_install_task($task, $data) {
   $target = $task->context_options['uri'];
   $commands = array();
   if ($uid1 != '') {
-    $commands[] = 'user-create ' . $saas_client_name . ' --mail=' . $saas_client_email;
+    $commands['user-create'] = 'user-create ' . $saas_client_name . ' --mail=' . $saas_client_email;
+    $commands['user-login'] = 'user-login ' . $saas_client_name;
   }
   if ($role != '') {
-    $commands[] = 'user-add-role ' . $role . $saas_client_name;
+    $commands['user-add-role'] = 'user-add-role ' . $role . $saas_client_name;
   }
   // add hook to allow for additional commands?
-  foreach ($commands as $command) {
-    provision_backend_invoke($target, $command);
+  $results = array();
+  foreach ($commands as $cmd => $command) {
+    $result = provision_backend_invoke($target, $command);
+    $results[$cmd]['output'] = $result['output'];
   }
-  // pass the login link back to the front end.
-  //  drush_set_option('login_link', $result['context']['login_link']);
+  
+  // ref.: hosting_site_post_hosting_login_reset_task()
+  $cache = array(
+    'expire' => strtotime("+24 hours"), 
+    'link' => $results['user-login']['output'],
+  );
+  cache_set('hosting:site:' . $task->ref->nid . ':login_link', $cache, 'cache', $cache['expire'] );
 }
