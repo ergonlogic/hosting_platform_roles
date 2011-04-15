@@ -51,7 +51,7 @@ function hosting_saas_post_hosting_install_task($task, $data) {
   $target = $task->context_options['uri'];
   $commands = array();
   if ($uid1 != '') {
-    $commands['user-create'] = 'user-create ' . $saas_client_name . ' --mail=' . $saas_client_email . ' --message=status_activated';
+    $commands['user-create'] = 'user-create ' . $saas_client_name . ' --mail=' . $saas_client_email . ' --notify --message=status_activated';
     $commands['user-login'] = 'user-login ' . $saas_client_name;
   }
   if ($role != '') {
