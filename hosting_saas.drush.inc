@@ -55,7 +55,8 @@ function hosting_saas_post_hosting_install_task($task, $data) {
     $commands['user-login'] = 'user-login ' . $saas_client_name;
   }
   if ($role != '') {
-    $commands['user-add-role'] = 'user-add-role ' . $role . $saas_client_name;
+    $commands['user-add-role'] = 'user-add-role ' . $role . ' --name=' . $saas_client_name;
+
   }
   // add hook to allow for additional commands?
   $results = array();
