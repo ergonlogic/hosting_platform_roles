@@ -1,0 +1,77 @@
+<?php
+// $Id$
+
+/**
+ * @file
+ * Add/remove db tables
+ */
+
+/**
+ * Implementation of hook_install().
+ */
+function hosting_platform_roles_install() {
+  // Create database tables
+  drupal_install_schema('hosting_platform_roles');
+}
+
+/**
+ * Implementation of hook_uninstall().
+ */
+function hosting_platform_roles_uninstall() {
+  // Delete database tables
+  drupal_uninstall_schema('hosting_platform_roles');
+}
+
+/**
+ * Implementation of hook_schema().
+ */
+function hosting_platform_roles_schema() {
+  $schema['hosting_platform_roles_uid1'] = array(
+    'description' => t('Stores platform root user (uid1) information.'),
+    'fields' => array(
+      'pl_nid' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => t('The platform\'s {node}.nid.'),
+      ),
+      'pr_nid' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => t('The profile\'s {node}.nid.'),
+      ),
+      'uid' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => t('The platform\'s admin user\'s {user}.uid'),
+      ),
+    ),
+  );
+
+  $schema['hosting_platform_roles_roles'] = array(
+    'description' => t('Stores platform roles information.'),
+    'fields' => array(
+      'pl_nid' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => t('The platform\'s {node}.nid.'),
+      ),
+      'pr_nid' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => t('The profile\'s {node}.nid.'),
+      ),
+      'role' => array(
+        'type' => 'text',
+        'not null' => TRUE,
+        'description' => t('The platform\'s roles\'s {role}.rid'),
+      ),
+    ),
+  );
+
+  return $schema;
+}

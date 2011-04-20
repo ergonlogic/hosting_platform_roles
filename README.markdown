@@ -29,9 +29,8 @@ To do
 - comment ALL functions
 - remove hook_forms()
 - add .install, in which:
-  - create db table
-  - add perm to platform mgr & admin roles
-  - support uninstalls by dropping the table
+  - create/drop db table **[done]**
+  - add perm to platform mgr & admin roles **[no such roles by default...]**
 - allow for an aegir-wide default for uid1 (?)
 - move from using the variables table into dedicated table
 - call drush commands individually
