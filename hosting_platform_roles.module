@@ -94,10 +94,7 @@ function hosting_platform_roles_platform_form_submit($form, &$form_state) {
 
   $nid = $form['#parameters'][2];
   $profiles = hosting_get_profiles($nid);
-  foreach ($profiles as $package_nid => $profile_name) {
-    variable_set('hosting_platform_roles_' . $nid . '_' . $package_nid . '_uid1', $form_state['values'][$package_nid . '_uid1']);
-    variable_set('hosting_platform_roles_' . $nid . '_' . $package_nid . '_role', $form_state['values'][$package_nid . '_role']);
-  }
+
   foreach ($profiles as $package_nid => $profile_name) { 
     // Should we check for changes before updating potentially lots of db records?
     $uid1 = user_load(array('name' => $form_state['values'][$package_nid . '_uid1']))->uid;

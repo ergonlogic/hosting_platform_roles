@@ -11,22 +11,15 @@
 /**
  * Implementation of drush_hook_pre_hosting_task().
  *
- * Override the client in create_admin_user, if Platform Roles is implemented on the platform
+ * Override the user that'll be used in create_admin_user()
  */
 
 function drush_hosting_platform_roles_pre_hosting_task() {
   $task =& drush_get_context('HOSTING_TASK');
-  $platform_nid = $task->ref->platform;
-  $profile_nid = $task->ref->profile;
 
-  // Here we get the name of the user we want to assign uid1 to.
-  // It's in a variable built up using the platform and profile node ID's.
-  $uid1_name = variable_get('hosting_platform_roles_' . $platform_nid . '_' . $profile_nid . '_uid1', '');
+  if ($task->ref->type == 'site' && ($task->task_type == 'install')) {
+    $task->uid = user_load(db_result(db_query('SELECT {uid} FROM {hosting_platform_roles_uid1} WHERE pl_nid=%d AND pr_nid=%d', $task->ref->platform, $task->ref->profile)))->uid;
 
-  // We only need to do this on site installs, and probably not on verify's
-  if ($task->ref->type == 'site' && ($task->task_type == 'install' || $task->task_type == 'verify')) {
-    $user = user_load(array(name => $uid1_name));
-    $task->uid = $user->uid;
   }
 }
 
@@ -38,25 +31,21 @@ function drush_hosting_platform_roles_pre_hosting_task() {
  */
 
 function hosting_platform_roles_post_hosting_install_task($task, $data) {
-  $platform_nid = $task->ref->platform;
-  $profile_nid = $task->ref->profile;
+  $role = db_result(db_query('SELECT {role} FROM {hosting_platform_roles_roles} WHERE pl_nid=%d AND pr_nid=%d', $task->ref->platform, $task->ref->profile));
+  $uid1 = db_result(db_query('SELECT {uid} FROM {hosting_platform_roles_uid1} WHERE pl_nid=%d AND pr_nid=%d', $task->ref->platform, $task->ref->profile));
 
-  $role = variable_get('hosting_platform_roles_' . $platform_nid . '_' . $profile_nid . '_role', '');
-  $uid1 = variable_get('hosting_platform_roles_' . $platform_nid . '_' . $profile_nid . '_uid1', '');
-
-  $platform_roles_client_name = $task->ref->name;
-  $platform_roles_user = user_load(array(name => $platform_roles_client_name));
-  $platform_roles_client_email = $platform_roles_user->mail;
+  $client_name = $task->ref->name;
+  $client_email = user_load(array('name' => $client_name))->mail;
 
   // call a backend task to do the actual installation.
   $target = $task->context_options['uri'];
   $commands = array();
-  if ($uid1 != '') {
-    $commands['user-create'] = 'user-create ' . $platform_roles_client_name . ' --mail=' . $platform_roles_client_email . ' --notify --message=status_activated';
-    $commands['user-login'] = 'user-login ' . $platform_roles_client_name;
+  if ($uid1 != FALSE) {
+    $commands['user-create'] = 'user-create ' . $client_name . ' --mail=' . $client_email . ' --notify --message=status_activated';
+    $commands['user-login'] = 'user-login ' . $client_name;
   }
   if ($role != '') {
-    $commands['user-add-role'] = 'user-add-role ' . $role . ' --name=' . $platform_roles_client_name;
+    $commands['user-add-role'] = 'user-add-role ' . $role . ' --name=' . $client_name;
 
   }
   // add hook to allow for additional commands?
