@@ -65,14 +65,14 @@ function hosting_platform_roles_platform_form($form_state, $nid) {
       '#collapsible' => TRUE,
       '#collapsed' => TRUE,
     );
-    $form[$profile_name][$nid . '_' . $package_nid . '_uid1'] = array(
+    $form[$profile_name][$package_nid . '_uid1'] = array(
       '#type' => 'textfield',
       '#title' => 'Admin user',
       '#default_value' => variable_get('hosting_platform_roles_' . $nid . '_' . $package_nid . '_uid1', ''),
       '#autocomplete_path' => 'user/autocomplete',
       '#description' => 'Root user (uid1) for sites created with the ' . $profile_name . ' profile.',
     );
-    $form[$profile_name][$nid . '_' . $package_nid . '_role'] = array(
+    $form[$profile_name][$package_nid . '_role'] = array(
       '#type' => 'textfield',
       '#title' => 'Client user role',
       '#default_value' => variable_get('hosting_platform_roles_' . $nid . '_' . $package_nid . '_role', ''),
@@ -95,7 +95,23 @@ function hosting_platform_roles_platform_form_submit($form, &$form_state) {
   $nid = $form['#parameters'][2];
   $profiles = hosting_get_profiles($nid);
   foreach ($profiles as $package_nid => $profile_name) {
-    variable_set('hosting_platform_roles_' . $nid . '_' . $package_nid . '_uid1', $form_state['values'][$nid . '_' . $package_nid . '_uid1']);
-    variable_set('hosting_platform_roles_' . $nid . '_' . $package_nid . '_role', $form_state['values'][$nid . '_' . $package_nid . '_role']);
+    variable_set('hosting_platform_roles_' . $nid . '_' . $package_nid . '_uid1', $form_state['values'][$package_nid . '_uid1']);
+    variable_set('hosting_platform_roles_' . $nid . '_' . $package_nid . '_role', $form_state['values'][$package_nid . '_role']);
+  }
+  foreach ($profiles as $package_nid => $profile_name) { 
+    // Should we check for changes before updating potentially lots of db records?
+    $uid1 = user_load(array('name' => $form_state['values'][$package_nid . '_uid1']))->uid;
+    $role = $form_state['values'][$package_nid . '_role']; 
+    // if there are already db records delete them
+    db_query('DELETE FROM {hosting_platform_roles_uid1} WHERE pl_nid = %d AND pr_nid = %d', $nid, $package_nid);
+    db_query('DELETE FROM {hosting_platform_roles_roles} WHERE pl_nid = %d AND pr_nid = %d', $nid, $package_nid);
+    if ($uid1 !== '0') {
+      //insert into uid1
+      db_query('INSERT INTO {hosting_platform_roles_uid1} (pl_nid, pr_nid, uid) VALUES (%d, %d, %d)', $nid, $package_nid, $uid1);
+    }
+    if ($role !== '') {
+      //insert into role
+      db_query('INSERT INTO {hosting_platform_roles_roles} (pl_nid, pr_nid, role) VALUES (%d, %d, "%s")', $nid, $package_nid, $role);
+    }
   }
 }
