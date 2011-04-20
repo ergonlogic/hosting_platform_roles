@@ -1,0 +1,117 @@
+<?php
+
+/**
+ * Implementation of hook_perm().
+ */
+function hosting_platform_roles_perm() {
+  $perms = array(
+    'administer platform roles settings');
+  return $perms;
+}
+
+/**
+ * Implementation of hook_menu().
+ */
+
+function hosting_platform_roles_menu() {
+  $items = array();
+  $items['node/%hosting_platform_roles_node/roles'] = array(
+    'title' => 'Roles',
+    'description' => 'Platform role settings',
+    'page callback' => 'hosting_platform_roles_page',
+    'page arguments' => array(1),
+    'type' => MENU_LOCAL_TASK,
+    'access arguments' => array('administer platform roles settings'),
+    'weight' => 1,
+  );
+  return $items;
+}
+
+/**
+ * Load the node into the menu
+ */
+function hosting_platform_roles_node_load($arg) {
+  if (!is_numeric($arg)) {
+    return FALSE;
+  }
+  if ($node = node_load($arg)) {
+    if (in_array($node->type, array('platform'))) {
+      return $node;
+    }
+  }
+  return FALSE;
+}
+
+
+/**
+ * Form where we collect role/uid1 information on the various profiles on a platform
+ *
+ * @param $nid
+ *   Node ID of the platform
+ */
+
+function hosting_platform_roles_platform_form($form_state, $nid) {
+  $form = array();
+  // Get the profiles available on this platform
+  $profiles = hosting_get_profiles($nid);
+  $form['profiles'] = array(
+    '#type' => 'hidden',
+    '#value' => $profiles,
+  );
+
+  foreach ($profiles as $package_nid => $profile_name) {
+    $form[$profile_name] = array(
+      '#type' => 'fieldset',
+      '#title' => 'Profile: ' . $profile_name,
+      '#collapsible' => TRUE,
+      '#collapsed' => TRUE,
+    );
+    $form[$profile_name][$nid . '_' . $package_nid . '_uid1'] = array(
+      '#type' => 'textfield',
+      '#title' => 'Admin user',
+      '#default_value' => variable_get('hosting_platform_roles_' . $nid . '_' . $package_nid . '_uid1', ''),
+      '#autocomplete_path' => 'user/autocomplete',
+      '#description' => 'Root user (uid1) for sites created with the ' . $profile_name . ' profile.',
+    );
+    $form[$profile_name][$nid . '_' . $package_nid . '_role'] = array(
+      '#type' => 'textfield',
+      '#title' => 'Client user role',
+      '#default_value' => variable_get('hosting_platform_roles_' . $nid . '_' . $package_nid . '_role', ''),
+      '#description' => 'Role assigned to client\'s user when creating sites with the ' . $profile_name . ' profile.',
+    );
+  }
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Save'),
+  );
+  return $form;
+}
+// to remove
+function hosting_platform_roles_forms($form_id, $args) {
+  $forms['saasform'] = array(
+    'callback' => 'hosting_platform_roles_platform_form',
+    'callback arguments' => $args,
+  );
+  return $forms;
+}
+
+// TODO:  hosting_platform_roles_form_validate?
+
+function hosting_platform_roles_platform_form_submit($form, &$form_state) {
+
+// setting variable format: hosting_platform_roles_[platform_nid]_[profile_nid]_[uid1|role]
+
+  $nid = $form['#parameters'][2];
+  $profiles = $form['profiles']['#value'];
+  foreach ($profiles as $package_nid => $profile_name) {
+    variable_set('hosting_platform_roles_' . $nid . '_' . $package_nid . '_uid1', $form_state['values'][$nid . '_' . $package_nid . '_uid1']);
+    variable_set('hosting_platform_roles_' . $nid . '_' . $package_nid . '_role', $form_state['values'][$nid . '_' . $package_nid . '_role']);
+  }
+}
+
+function hosting_platform_roles_page($node) {
+  drupal_set_title(t('Role Settings for') . ' ' . $node->title);
+  $output= 'Role settings apply individually to the profiles on a given platform. Below, you will find a list of the profiles available on the current platform.';
+  $output .= drupal_get_form('hosting_platform_roles_platform_form', $node->nid);
+  return $output;
+}
