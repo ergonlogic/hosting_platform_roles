@@ -26,8 +26,8 @@ When a site is created on a such a platform:
 To do
 =====
 
-- comment ALL functions
-- remove hook_forms()
+- comment ALL functions **[in progress]**
+- remove hook_forms() and hook_page() **[done]**
 - add .install, in which:
   - create/drop db table **[done]**
   - add perm to platform mgr & admin roles **[no such roles by default...]**
@@ -38,7 +38,7 @@ To do
 - validate form input
 - remove un-necessary variables
 - re-write comments to explains the whys, rather than the hows
-- add approproate t()'s
+- add approproate t()'s **[in progress]**
 - call hosting_get_profiles() in the form_submit
 - write drush email code, rather than depend on a patch to drush
 - allow for multiple roles to be assigned

@@ -12,14 +12,13 @@ function hosting_platform_roles_perm() {
 /**
  * Implementation of hook_menu().
  */
-
 function hosting_platform_roles_menu() {
   $items = array();
   $items['node/%hosting_platform_roles_node/roles'] = array(
-    'title' => 'Roles',
-    'description' => 'Platform role settings',
-    'page callback' => 'hosting_platform_roles_page',
-    'page arguments' => array(1),
+    'title' => t('Roles'),
+    'description' => t('Platform role settings'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('hosting_platform_roles_platform_form', 1),
     'type' => MENU_LOCAL_TASK,
     'access arguments' => array('administer platform roles settings'),
     'weight' => 1,
@@ -28,7 +27,7 @@ function hosting_platform_roles_menu() {
 }
 
 /**
- * Load the node into the menu
+ * Wildcard loader function that limits the roles tab to just platform nodes
  */
 function hosting_platform_roles_node_load($arg) {
   if (!is_numeric($arg)) {
@@ -36,7 +35,7 @@ function hosting_platform_roles_node_load($arg) {
   }
   if ($node = node_load($arg)) {
     if (in_array($node->type, array('platform'))) {
-      return $node;
+      return $arg;
     }
   }
   return FALSE;
@@ -51,9 +50,14 @@ function hosting_platform_roles_node_load($arg) {
  */
 
 function hosting_platform_roles_platform_form($form_state, $nid) {
+  drupal_set_title(t('Role Settings for') . ' ' . node_load($nid)->title);
   $form = array();
   // Get the profiles available on this platform
   $profiles = hosting_get_profiles($nid);
+  $form['intro'] = array(
+    '#value' => 'Role settings apply individually to the profiles on a given platform. Below, you will find a list of the profiles available on the current platform.',
+  );
+ 
   $form['profiles'] = array(
     '#type' => 'hidden',
     '#value' => $profiles,
@@ -86,14 +90,6 @@ function hosting_platform_roles_platform_form($form_state, $nid) {
   );
   return $form;
 }
-// to remove
-function hosting_platform_roles_forms($form_id, $args) {
-  $forms['saasform'] = array(
-    'callback' => 'hosting_platform_roles_platform_form',
-    'callback arguments' => $args,
-  );
-  return $forms;
-}
 
 // TODO:  hosting_platform_roles_form_validate?
 
@@ -107,11 +103,4 @@ function hosting_platform_roles_platform_form_submit($form, &$form_state) {
     variable_set('hosting_platform_roles_' . $nid . '_' . $package_nid . '_uid1', $form_state['values'][$nid . '_' . $package_nid . '_uid1']);
     variable_set('hosting_platform_roles_' . $nid . '_' . $package_nid . '_role', $form_state['values'][$nid . '_' . $package_nid . '_role']);
   }
-}
-
-function hosting_platform_roles_page($node) {
-  drupal_set_title(t('Role Settings for') . ' ' . $node->title);
-  $output= 'Role settings apply individually to the profiles on a given platform. Below, you will find a list of the profiles available on the current platform.';
-  $output .= drupal_get_form('hosting_platform_roles_platform_form', $node->nid);
-  return $output;
 }
