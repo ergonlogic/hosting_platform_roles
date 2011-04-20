@@ -67,15 +67,15 @@ function hosting_platform_roles_platform_form($form_state, $nid) {
     );
     $form[$profile_name][$package_nid . '_uid1'] = array(
       '#type' => 'textfield',
-      '#title' => 'Admin user',
-      '#default_value' => variable_get('hosting_platform_roles_' . $nid . '_' . $package_nid . '_uid1', ''),
+      '#title' => 'Root (uid1) user',
+      '#default_value' => user_load(db_result(db_query('SELECT {uid} FROM {hosting_platform_roles_uid1} WHERE pl_nid=%d AND pr_nid=%d', $nid, $package_nid)))->name,
       '#autocomplete_path' => 'user/autocomplete',
       '#description' => 'Root user (uid1) for sites created with the ' . $profile_name . ' profile.',
     );
     $form[$profile_name][$package_nid . '_role'] = array(
       '#type' => 'textfield',
       '#title' => 'Client user role',
-      '#default_value' => variable_get('hosting_platform_roles_' . $nid . '_' . $package_nid . '_role', ''),
+      '#default_value' => db_result(db_query('SELECT {role} FROM {hosting_platform_roles_roles} WHERE pl_nid=%d AND pr_nid=%d', $nid, $package_nid)),
       '#description' => 'Role assigned to client\'s user when creating sites with the ' . $profile_name . ' profile.',
     );
   }
