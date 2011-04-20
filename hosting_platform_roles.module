@@ -89,9 +89,6 @@ function hosting_platform_roles_platform_form($form_state, $nid) {
 // TODO:  hosting_platform_roles_form_validate?
 
 function hosting_platform_roles_platform_form_submit($form, &$form_state) {
-
-// setting variable format: hosting_platform_roles_[platform_nid]_[profile_nid]_[uid1|role]
-
   $nid = $form['#parameters'][2];
   $profiles = hosting_get_profiles($nid);
 
