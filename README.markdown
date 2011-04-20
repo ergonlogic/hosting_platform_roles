@@ -42,5 +42,5 @@ To do
 - add approproate t()'s
 - call hosting_get_profiles() in the form_submit
 - write drush email code, rather than depend on a patch to drush
-
+- allow for multiple roles to be assigned
 
