@@ -58,11 +58,6 @@ function hosting_platform_roles_platform_form($form_state, $nid) {
     '#value' => 'Role settings apply individually to the profiles on a given platform. Below, you will find a list of the profiles available on the current platform.',
   );
  
-  $form['profiles'] = array(
-    '#type' => 'hidden',
-    '#value' => $profiles,
-  );
-
   foreach ($profiles as $package_nid => $profile_name) {
     $form[$profile_name] = array(
       '#type' => 'fieldset',
@@ -98,7 +93,7 @@ function hosting_platform_roles_platform_form_submit($form, &$form_state) {
 // setting variable format: hosting_platform_roles_[platform_nid]_[profile_nid]_[uid1|role]
 
   $nid = $form['#parameters'][2];
-  $profiles = $form['profiles']['#value'];
+  $profiles = hosting_get_profiles($nid);
   foreach ($profiles as $package_nid => $profile_name) {
     variable_set('hosting_platform_roles_' . $nid . '_' . $package_nid . '_uid1', $form_state['values'][$nid . '_' . $package_nid . '_uid1']);
     variable_set('hosting_platform_roles_' . $nid . '_' . $package_nid . '_role', $form_state['values'][$nid . '_' . $package_nid . '_role']);
