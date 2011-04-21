@@ -62,8 +62,8 @@ function hosting_platform_roles_post_hosting_install_task($task, $data) {
  * Implementation of hook_drush_command().
  */
 function hosting_platform_roles_drush_command() {
-  $items['hosting-platform-roles-notify'] = array(
-    'callback' => 'drush_hosting_platform_roles_notify',
+  $items['notify'] = array(
+    'callback' => 'drush_notify',
     'aliases' => array('notify'),
     'description' => dt('Send email to client notifying of the creation of their new user account.'),
     'arguments' => array(
@@ -84,7 +84,7 @@ function hosting_platform_roles_drush_command() {
 /**
  * Drush command to send notification emails
  */
-function drush_hosting_platform_roles_notify($name) {
+function drush_notify($name) {
   $message = drush_get_option('message');
   $message_options = array(
     'register_admin_created' => 'Welcome message for user created by the admin',
