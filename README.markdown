@@ -33,7 +33,7 @@ To do
 - move from using variables table to our own db tables **[done]**
 - call drush commands individually **[done]**
 - only set the login link when uid1 is set for a platform **[done]**
-- validate form input
+- validate form input **[in progress]**
 - remove un-necessary variables **[mostly done]**
 - re-write comments to explains the whys, rather than the hows
 - add approproate t()'s **[in progress]**

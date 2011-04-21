@@ -86,8 +86,25 @@ function hosting_platform_roles_platform_form($form_state, $nid) {
   return $form;
 }
 
-// TODO:  hosting_platform_roles_form_validate?
+/**
+ * Validate our form.
+ */
+function hosting_platform_roles_platform_form_validate($form, &$form_state) {
+  $nid = $form['#parameters'][2];
+  $profiles = hosting_get_profiles($nid);
+  foreach ($profiles as $package_nid => $profile_name) { 
+    // ensure that uid1 is a real user
+    if (user_load(array('name' => $form_state['values'][$package_nid . '_uid1'])) == 0) {
+      form_set_error($package_nid . '_uid1', '<em>' . $form_state['values'][$package_nid . '_uid1'] . '</em>' . t(' is not a valid user.'));
+    }
+    // keep things like "; rm -rf" from being input into the role field
+  }
+}
 
+
+/**
+ * Implementation of hook_form_submit().
+ */
 function hosting_platform_roles_platform_form_submit($form, &$form_state) {
   $nid = $form['#parameters'][2];
   $profiles = hosting_get_profiles($nid);
