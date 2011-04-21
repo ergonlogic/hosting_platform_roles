@@ -38,6 +38,13 @@ To do
 - re-write comments to explains the whys, rather than the hows
 - add approproate t()'s **[in progress]**
 - call hosting_get_profiles() in the form_submit **[done]**
-- write drush email code, rather than depend on a patch to drush
+- write drush email code, rather than depend on a patch to drush **[in progress]**
 - allow for multiple roles to be assigned
 
+Notes
+=====
+New drush command, `drush notify [username]` runs 3 times, after being called
+once from the command line. Similar, perhaps to Cash's issue at the DC code sprint?
+Could it be related to: http://drupal.org/node/704848?
+
+Maybe, the drush command code needs to live in a separate .inc file?
