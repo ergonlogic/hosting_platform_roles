@@ -28,13 +28,11 @@ To do
 
 - comment ALL functions **[in progress]**
 - remove hook_forms() and hook_page() **[done]**
-- add .install, in which:
-  - create/drop db table **[done]**
-  - add perm to platform mgr & admin roles **[no such roles by default...]**
+- add .install to create/drop db tables **[done]**
 - allow for an aegir-wide default for uid1 (?)
 - move from using variables table to our own db tables **[done]**
-- call drush commands individually
-- only set the login link when uid1 is set for a platform
+- call drush commands individually **[done]**
+- only set the login link when uid1 is set for a platform **[done]**
 - validate form input
 - remove un-necessary variables **[mostly done]**
 - re-write comments to explains the whys, rather than the hows

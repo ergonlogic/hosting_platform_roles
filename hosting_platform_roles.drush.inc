@@ -37,30 +37,23 @@ function hosting_platform_roles_post_hosting_install_task($task, $data) {
   $client_name = $task->ref->name;
   $client_email = user_load(array('name' => $client_name))->mail;
 
-  // call a backend task to do the actual installation.
+  // call backend tasks to do the actual user creation, etc.
   $target = $task->context_options['uri'];
-  $commands = array();
   if ($uid1 != FALSE) {
-    $commands['user-create'] = 'user-create ' . $client_name . ' --mail=' . $client_email . ' --notify --message=status_activated';
-    $commands['user-login'] = 'user-login ' . $client_name;
+    $results['user-create'] = provision_backend_invoke($target, 'user-create ' . $client_name . ' --mail=' . $client_email . ' --notify --message=status_activated');
+    drush_log('<pre>' . $results['user-create']['output'] . '</pre>');
+    $results['user-login'] = provision_backend_invoke($target, 'user-login ' . $client_name);
+    drush_log('Client user login link: ' . $results['user-login']['output']);
+    // Set the site login link to the one we just created (for uid3)
+    // ref.: hosting_site_post_hosting_login_reset_task()
+    $cache = array(
+      'expire' => strtotime("+24 hours"), 
+      'link' => $results['user-login']['output'],
+    );
+    cache_set('hosting:site:' . $task->ref->nid . ':login_link', $cache, 'cache', $cache['expire'] );
   }
-  if ($role != '') {
-    $commands['user-add-role'] = 'user-add-role ' . $role . ' --name=' . $client_name;
 
+  if ($role != FALSE) {
+    provision_backend_invoke($target, 'user-add-role ' . $role . ' --name=' . $client_name);
   }
-  // add hook to allow for additional commands?
-  $results = array();
-  foreach ($commands as $cmd => $command) {
-    $result = provision_backend_invoke($target, $command);
-    $results[$cmd]['output'] = $result['output'];
-  }
-
-  // Set the site login link to the one generate post install for uid3
-  // ref.: hosting_site_post_hosting_login_reset_task()
-  $cache = array(
-    'expire' => strtotime("+24 hours"), 
-    'link' => $results['user-login']['output'],
-  );
-  cache_set('hosting:site:' . $task->ref->nid . ':login_link', $cache, 'cache', $cache['expire'] );
-
 }
