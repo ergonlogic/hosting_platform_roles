@@ -38,7 +38,7 @@ To do
 - re-write comments to explains the whys, rather than the hows
 - add approproate t()'s **[in progress]**
 - call hosting_get_profiles() in the form_submit **[done]**
-- write drush email code, rather than depend on a patch to drush **[in progress]**
+- write drush email code, rather than depend on a patch to drush **[done]**
 - allow for multiple roles to be assigned
 
 Notes

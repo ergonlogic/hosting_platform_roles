@@ -35,13 +35,15 @@ function hosting_platform_roles_post_hosting_install_task($task, $data) {
   $uid1 = db_result(db_query('SELECT {uid} FROM {hosting_platform_roles_uid1} WHERE pl_nid=%d AND pr_nid=%d', $task->ref->platform, $task->ref->profile));
 
   $client_name = $task->ref->name;
-  $client_email = user_load(array('name' => $client_name))->mail;
-
   // call backend tasks to do the actual user creation, etc.
   $target = $task->context_options['uri'];
   if ($uid1 != FALSE) {
-    $results['user-create'] = provision_backend_invoke($target, 'user-create ' . $client_name . ' --mail=' . $client_email . ' --notify --message=status_activated');
-    drush_log('<pre>' . $results['user-create']['output'] . '</pre>');
+    $results['user-create'] = provision_backend_invoke($target, 'user-create ' . $client_name . ' --mail=' . user_load(array('name' => $client_name))->mail);
+    // if http://drupal.org/node/1116414 gets committed, we can remove the
+    // "notify" command code and add: ' --notify --message=status_activated');
+    drush_log('User created:<br /><pre>' . $results['user-create']['output'] . '</pre>');
+    $results['notify'] = provision_backend_invoke($target, 'notify ' . $client_name);
+    drush_log($results['notify']);
     $results['user-login'] = provision_backend_invoke($target, 'user-login ' . $client_name);
     drush_log('Client user login link: ' . $results['user-login']['output']);
     // Set the site login link to the one we just created (for uid3)
