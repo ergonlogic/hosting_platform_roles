@@ -31,7 +31,7 @@ When a site is created on a such a platform:
 To do
 =====
 
-- comment ALL functions **[in progress]**
+- comment ALL functions **[done]**
 - remove hook_forms() and hook_page() **[done]**
 - add .install to create/drop db tables **[done]**
 - allow for an aegir-wide default for uid1 (?)
@@ -39,8 +39,8 @@ To do
 - call drush commands individually **[done]**
 - only set the login link when uid1 is set for a platform **[done]**
 - validate form input **[in progress]**
-- remove un-necessary variables **[mostly done]**
-- re-write comments to explains the whys, rather than the hows
+- remove un-necessary variables **[done]**
+- re-write comments to explains the whys, rather than the hows **[done]**
 - add approproate t()'s **[in progress]**
 - call hosting_get_profiles() in the form_submit **[done]**
 - write drush email code, rather than depend on a patch to drush **[done]**
