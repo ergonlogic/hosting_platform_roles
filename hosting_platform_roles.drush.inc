@@ -4,17 +4,15 @@
 /**
  * @file
  *
- *   Here we hook into the site install task to change the user prior to 
- *   install, and then add a second user for the client, notify them of it,
- *   update the login reset link, and assign them a role.
- *
- *   Also, we add a Drush command to handle the notification.
+ *   These are the backend commands that actually accomplish adding a second
+ *   user, adds the drush command to notify them of it, assigns them a role and
+ *   updates the login reset link.
  */
 
 /**
  * Implementation of drush_hook_pre_hosting_task().
  *
- * Override the user that'll be used in create_admin_user()
+ * Overrides the user that'll be used during install in create_admin_user()
  */
 function drush_hosting_platform_roles_pre_hosting_task() {
   $task =& drush_get_context('HOSTING_TASK');
@@ -26,9 +24,11 @@ function drush_hosting_platform_roles_pre_hosting_task() {
   }
 }
 
-
 /*
  * Implementation of hook_post_hosting_TASK_TYPE_task().
+ *
+ * Runs the backend commands to create a second user, send a notification,
+ * update the login link, and assign a role. 
  */
 function hosting_platform_roles_post_hosting_install_task($task, $data) {
   $role = db_result(db_query('SELECT {role} FROM {hosting_platform_roles_roles} WHERE pl_nid=%d AND pr_nid=%d', $task->ref->platform, $task->ref->profile));
@@ -37,16 +37,18 @@ function hosting_platform_roles_post_hosting_install_task($task, $data) {
   $client_name = $task->ref->name;
   $target = $task->context_options['uri'];
   if ($uid1 != FALSE) {
-    // if http://drupal.org/node/1116414 gets committed, we can remove the
-    // "notify" command code and add: ' --notify --message=status_activated' to the end of 'user-create'
+
+    // if http://drupal.org/node/1116414 gets committed, we can remove the "notify" command code
     $results['user-create'] = provision_backend_invoke($target, 'user-create ' . $client_name . ' --mail=' . user_load(array('name' => $client_name))->mail);
     drush_log('User created:<br /><pre>' . $results['user-create']['output'] . '</pre>');
+    
     $results['notify'] = provision_backend_invoke($target, 'notify ' . $client_name);
     drush_log($results['notify']);
+    
     $results['user-login'] = provision_backend_invoke($target, 'user-login ' . $client_name);
     drush_log('Client user login link: ' . $results['user-login']['output']);
-    // Set the site login link to the one we just created
-    // ref.: hosting_site_post_hosting_login_reset_task()
+    
+    // Set the site login link to the one we just created; ref.: hosting_site_post_hosting_login_reset_task()
     $cache = array(
       'expire' => strtotime("+24 hours"), 
       'link' => $results['user-login']['output'],
@@ -59,6 +61,7 @@ function hosting_platform_roles_post_hosting_install_task($task, $data) {
   }
   
   if ($role != FALSE) {
+    // TODO: support adding multiple roles
     drush_escapeshellarg(&$role);
     provision_backend_invoke($target, 'user-add-role ' . $role . ' --name=' . $client_name);
   }
