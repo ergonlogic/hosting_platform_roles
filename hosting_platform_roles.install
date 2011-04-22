@@ -1,16 +1,14 @@
 <?php
-// $Id$
 
 /**
  * @file
- * Add/remove db tables
+ * Define database tables to track uid1 & roles per platform/profile
  */
 
 /**
  * Implementation of hook_install().
  */
 function hosting_platform_roles_install() {
-  // Create database tables
   drupal_install_schema('hosting_platform_roles');
 }
 
@@ -18,7 +16,6 @@ function hosting_platform_roles_install() {
  * Implementation of hook_uninstall().
  */
 function hosting_platform_roles_uninstall() {
-  // Delete database tables
   drupal_uninstall_schema('hosting_platform_roles');
 }
 
