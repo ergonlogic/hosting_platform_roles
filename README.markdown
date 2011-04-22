@@ -1,5 +1,12 @@
-Hosting Platform Roles is a Drupal module intended to extend Aegir to enable
-more control over what role(s) a client is assigned during site install. 
+Hosting Platform Roles
+======================
+
+Hosting Platform Roles is a Drupal module that extends Aegir to enable more
+control over what role(s) a client is assigned during site install. Since, by
+default, Aegir client's are given UID1 during site installs, this module also
+allows UID1 to be assigned to another user. This allows tighter control of the
+client's user experience, and thus support for Software-as-a-Service (SaaS)
+type business models.
 
 Current features
 ================
@@ -20,8 +27,6 @@ When a site is created on a such a platform:
 - that user is assigned the role specified on the platform's Roles tab for the
   relevant profile
 - the "Login" link is updated to point to the second user's account
-- Welcome email is sent to the second user **N.B. this currently requires a
-  [patch to drush](http://drupal.org/node/1116414)]**
 
 To do
 =====
@@ -41,10 +46,3 @@ To do
 - write drush email code, rather than depend on a patch to drush **[done]**
 - allow for multiple roles to be assigned
 
-Notes
-=====
-New drush command, `drush notify [username]` runs 3 times, after being called
-once from the command line. Similar, perhaps to Cash's issue at the DC code sprint?
-Could it be related to: http://drupal.org/node/704848?
-
-Maybe, the drush command code needs to live in a separate .inc file?
