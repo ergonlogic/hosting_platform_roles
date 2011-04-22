@@ -1,6 +1,6 @@
 core = "6.x"
 
-description = "Allows for sites to be created where UID1 is reserved and a second user is created and assigned a specified role."
-name = "Hosting Platform Roles"
+description = "Enables roles and UID1 for site installs to be set per platform."
+name = "Platform Roles"
 package = "Hosting"
 project = "hosting_platform_roles"
