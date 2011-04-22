@@ -97,7 +97,8 @@ function hosting_platform_roles_platform_form_validate($form, &$form_state) {
     if (user_load(array('name' => $form_state['values'][$package_nid . '_uid1'])) == 0) {
       form_set_error($package_nid . '_uid1', '<em>' . $form_state['values'][$package_nid . '_uid1'] . '</em>' . t(' is not a valid user.'));
     }
-    // keep things like "; rm -rf" from being input into the role field
+    // keep things like "; rm -rf /" from being input into the role field,
+    // which is a valid role name, btw
   }
 }
 
