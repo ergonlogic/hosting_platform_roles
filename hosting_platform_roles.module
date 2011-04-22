@@ -5,7 +5,7 @@
  */
 function hosting_platform_roles_perm() {
   $perms = array(
-    'administer platform roles settings');
+    'administer platform uid1/roles');
   return $perms;
 }
 
@@ -20,14 +20,14 @@ function hosting_platform_roles_menu() {
     'page callback' => 'drupal_get_form',
     'page arguments' => array('hosting_platform_roles_platform_form', 1),
     'type' => MENU_LOCAL_TASK,
-    'access arguments' => array('administer platform roles settings'),
+    'access arguments' => array('administer platform uid1/roles'),
     'weight' => 1,
   );
   return $items;
 }
 
 /**
- * Wildcard loader function that limits the roles tab to just platform nodes
+ * Wildcard loader function to limit the roles tab to just platform nodes
  */
 function hosting_platform_roles_node_load($arg) {
   if (!is_numeric($arg)) {
@@ -43,19 +43,17 @@ function hosting_platform_roles_node_load($arg) {
 
 
 /**
- * Form where we collect role/uid1 information on the various profiles on a platform
+ * Form where we collect role/uid1 information for profiles/platforms
  *
  * @param $nid
  *   Node ID of the platform
  */
-
 function hosting_platform_roles_platform_form($form_state, $nid) {
   drupal_set_title(t('Role Settings for') . ' ' . node_load($nid)->title);
   $form = array();
-  // Get the profiles available on this platform
   $profiles = hosting_get_profiles($nid);
   $form['intro'] = array(
-    '#value' => 'Role settings apply individually to the profiles on a given platform. Below, you will find a list of the profiles available on the current platform.',
+    '#value' => 'Role settings apply individually to the profiles on a platform. Below, you will find a list of the profiles available on the current platform.',
   );
  
   foreach ($profiles as $package_nid => $profile_name) {
@@ -97,8 +95,9 @@ function hosting_platform_roles_platform_form_validate($form, &$form_state) {
     if (user_load(array('name' => $form_state['values'][$package_nid . '_uid1'])) == 0) {
       form_set_error($package_nid . '_uid1', '<em>' . $form_state['values'][$package_nid . '_uid1'] . '</em>' . t(' is not a valid user.'));
     }
-    // keep things like "; rm -rf /" from being input into the role field,
-    // which is a valid role name, btw
+    // Since we don't know what roles are available on a given profile, we can't
+    // validate roles at this stage. So we'll validate it prior to using the
+    // value in hosting_platform_roles_post_hosting_install_task().
   }
 }
 
@@ -114,15 +113,12 @@ function hosting_platform_roles_platform_form_submit($form, &$form_state) {
     // Should we check for changes before updating potentially lots of db records?
     $uid1 = user_load(array('name' => $form_state['values'][$package_nid . '_uid1']))->uid;
     $role = $form_state['values'][$package_nid . '_role']; 
-    // if there are already db records delete them
     db_query('DELETE FROM {hosting_platform_roles_uid1} WHERE pl_nid = %d AND pr_nid = %d', $nid, $package_nid);
     db_query('DELETE FROM {hosting_platform_roles_roles} WHERE pl_nid = %d AND pr_nid = %d', $nid, $package_nid);
     if ($uid1 !== '0') {
-      //insert into uid1
       db_query('INSERT INTO {hosting_platform_roles_uid1} (pl_nid, pr_nid, uid) VALUES (%d, %d, %d)', $nid, $package_nid, $uid1);
     }
     if ($role !== '') {
-      //insert into role
       db_query('INSERT INTO {hosting_platform_roles_roles} (pl_nid, pr_nid, role) VALUES (%d, %d, "%s")', $nid, $package_nid, $role);
     }
   }

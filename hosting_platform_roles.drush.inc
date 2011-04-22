@@ -62,6 +62,7 @@ function hosting_platform_roles_post_hosting_install_task($task, $data) {
   
   if ($role != FALSE) {
     // TODO: support adding multiple roles
+    // TODO: check that the role really exists on this profile
     drush_escapeshellarg(&$role);
     provision_backend_invoke($target, 'user-add-role ' . $role . ' --name=' . $client_name);
   }
