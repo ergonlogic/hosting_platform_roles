@@ -57,14 +57,23 @@ function hosting_platform_roles_post_hosting_install_task($task, $data) {
   }
   else {
     // we may want to do this for block-placement, etc.
-    $client_name = user_load(1)->name;
+    $result = provision_backend_invoke($target, 'eval "print(user_load(1)->name)"');
+    $client_name = $result['output'];
   }
   
   if ($role != FALSE) {
     // TODO: support adding multiple roles
-    // TODO: check that the role really exists on this profile
-    drush_escapeshellarg(&$role);
-    provision_backend_invoke($target, 'user-add-role ' . $role . ' --name=' . $client_name);
+    // we can finally check that the role actually exists on this site
+    $result = provision_backend_invoke($target, 'eval "print(serialize(user_roles()))"');
+    $site_roles = unserialize($result['output']);
+    if (in_array($role, $site_roles)) {
+      // we need to avoid a role name like ";rm -rf /", which is a valid role name in D6, btw
+      drush_escapeshellarg(&$role);
+      provision_backend_invoke($target, 'user-add-role ' . $role . ' --name=' . $client_name);
+    }
+    else {
+      drush_set_error(DRUSH_APPLICATION_ERROR, dt('No role of <em>' . $role . '</em> is available on this platform'));
+    }
   }
 }
 
