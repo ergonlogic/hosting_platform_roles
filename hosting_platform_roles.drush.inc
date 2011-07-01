@@ -40,13 +40,13 @@ function hosting_platform_roles_post_hosting_install_task($task, $data) {
 
     // if http://drupal.org/node/1116414 gets committed, we can remove the "notify" command code
     $results['user-create'] = provision_backend_invoke($target, 'user-create ' . $client_name . ' --mail=' . user_load(array('name' => $client_name))->mail);
-    drush_log('User created:<br /><pre>' . $results['user-create']['output'] . '</pre>');
+    drush_log(dt('User created:') . $results['user-create']['output']);
     
     $results['notify'] = provision_backend_invoke($target, 'notify ' . $client_name);
     drush_log($results['notify']);
     
     $results['user-login'] = provision_backend_invoke($target, 'user-login ' . $client_name);
-    drush_log('Client user login link: ' . $results['user-login']['output']);
+    drush_log(dt('Client user login link: ') . $results['user-login']['output']);
     
     // Set the site login link to the one we just created; ref.: hosting_site_post_hosting_login_reset_task()
     $cache = array(
