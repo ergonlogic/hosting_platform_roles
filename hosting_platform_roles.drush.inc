@@ -83,6 +83,9 @@ function hosting_platform_roles_post_hosting_install_task($task, $data) {
 function hosting_platform_roles_drush_command() {
   $items['notify'] = array(
     'callback' => 'drush_notify',
+    // Why drush_notify() instead of drush_hosting_platform_roles_notify()?
+    // That gets run multiple times. See: http://drupal.org/node/704848
+    // Should be fixed in Drush > 4.4
     'aliases' => array('notify'),
     'description' => dt('Send email to client notifying of the creation of their new user account.'),
     'arguments' => array(
